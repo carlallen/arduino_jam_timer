@@ -4,7 +4,6 @@
 #include <Ethernet.h>
 #include <WebServer.h>
 static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-static uint8_t ip[] = { 192, 168, 1, 64 };
 
 static char latchPin = 5;
 static char clockPin = 6;
@@ -51,7 +50,7 @@ void indexPage(WebServer &server, WebServer::ConnectionType type, char *url_tail
         total_time = 60;
         jam_state = 4;
       }
-      else if (strcmp(name, "official") == 0) 
+      else if (strcmp(name, "official") == 0)
       {
         start_time = millis();
         jam_state = 5;
@@ -78,7 +77,7 @@ void update_leds() {
   char mins;
   char secs;
   unsigned long elapsed_time;
-  
+
   switch (jam_state) {
     case 0:
       display_time(0);
@@ -88,14 +87,14 @@ void update_leds() {
     case 3:
     case 4:
       elapsed_time = (millis() - start_time) / 1000;
-      if (elapsed_time >= total_time) 
+      if (elapsed_time >= total_time)
       {
         if (jam_state == 2 || jam_state == 3)
         {
           start_time = millis();
           total_time = 120;
           jam_state = 1;
-          display_time(120);   
+          display_time(120);
         }
         else
         {
@@ -146,16 +145,16 @@ void update_display(char one, char ten, char hundred) {
   shiftOut(dataPin, clockPin, LSBFIRST, one);
   shiftOut(dataPin, clockPin, LSBFIRST, ten);
   shiftOut(dataPin, clockPin, LSBFIRST, hundred);
-  digitalWrite(latchPin, HIGH); 
+  digitalWrite(latchPin, HIGH);
 }
 
 char tens_code(char min_val, char ten_val)
 {
-  if (min_val == 0 && jam_state != 0 && ten_val == 0) 
+  if (min_val == 0 && jam_state != 0 && ten_val == 0)
   {
     return 0x00;
   }
-  else 
+  else
   {
     return led_codes[ten_val];
   }
