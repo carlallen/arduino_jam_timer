@@ -80,7 +80,7 @@ void update_leds() {
       if (jam_state == 2 || jam_state == 3)
       {
         start_time = millis();
-        total_time = 119;
+        total_time = 120;
         jam_state = 1;
         mins = 2;
         secs = 0;        
@@ -156,7 +156,7 @@ void setup() {
   webserver.setDefaultCommand(&indexPage);
   webserver.addCommand("index.html", &indexPage);
   
-  MsTimer2::set(100, update_leds);
+  MsTimer2::set(33, update_leds);
   MsTimer2::start();
 }
 
