@@ -3,17 +3,13 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <WebServer.h>
+#include <ThreeDigit.h>
 static uint8_t mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
-static char latchPin = 5;
-static char clockPin = 6;
-static char dataPin = 7;
 static unsigned long start_time;
 static char total_time;
 static char jam_state = -1;
 static byte last_ip = -1;
-
-static char led_codes[] = { 0xDE, 0x06, 0xBA, 0xAE, 0x66, 0xEC, 0xFC, 0xC6, 0xFE, 0xE6 };
 
 #define PREFIX ""
 WebServer webserver(PREFIX, 80);
@@ -80,7 +76,7 @@ void update_leds() {
 
   switch (jam_state) {
     case 0:
-      display_time(0);
+      ThreeDigit::display_time(0, true);
       break;
     case 1:
     case 2:
@@ -94,92 +90,32 @@ void update_leds() {
           start_time = millis();
           total_time = 120;
           jam_state = 1;
-          display_time(120);
+          ThreeDigit::display_time(120);
         }
         else
         {
-          display_time(0);
+          ThreeDigit::display_time(0);
         }
       }
       else
       {
-       display_time(total_time - elapsed_time);
+       ThreeDigit::display_time(total_time - elapsed_time);
       }
       break;
     case 5:
-      display_time((millis() - start_time) /1000);
+      ThreeDigit::display_time((millis() - start_time) /1000);
       break;
     default:
-      if (last_ip == -1)
-      {
-        update_display(0x01, 0x0, 0x04);
-      }
-      else {
-        display_number(last_ip);
-      }
-  }
-}
-
-void display_time(unsigned long time_to_display) {
-  char mins = time_to_display / 60;
-  char secs = time_to_display % 60;
-  update_display(led_codes[secs % 10], tens_code(mins, secs / 10), min_code(mins));
-}
-
-void display_number(int number_to_display) {
-  char tens = number_to_display % 100 / 10;
-  char hundreds = number_to_display % 1000 / 100;
-  if (tens > 0) { tens = led_codes[tens]; }
-  if (hundreds > 0) {
-    hundreds = led_codes[hundreds];
-    if (tens == 0)
-    {
-      tens = led_codes[0];
-    }
-  }
-  update_display(led_codes[number_to_display % 10], tens, hundreds);
-}
-
-void update_display(char one, char ten, char hundred) {
-  digitalWrite(latchPin, LOW);
-  shiftOut(dataPin, clockPin, LSBFIRST, one);
-  shiftOut(dataPin, clockPin, LSBFIRST, ten);
-  shiftOut(dataPin, clockPin, LSBFIRST, hundred);
-  digitalWrite(latchPin, HIGH);
-}
-
-char tens_code(char min_val, char ten_val)
-{
-  if (min_val == 0 && jam_state != 0 && ten_val == 0)
-  {
-    return 0x00;
-  }
-  else
-  {
-    return led_codes[ten_val];
-  }
-}
-
-char min_code(char min_val)
-{
-  if (min_val == 0 && jam_state != 0)
-  {
-    return 0x00;
-  }
-  else
-  {
-    return led_codes[min_val] | 0x01;
+      break;
   }
 }
 
 void setup() {
   // set output mode for serial pins
-  pinMode(latchPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
-  pinMode(dataPin, OUTPUT);
-  update_display(0x20, 0x20, 0x20);
+  ThreeDigit::setup();
+  ThreeDigit::update_display(0x20, 0x20, 0x20);
   Ethernet.begin(mac);
-  last_ip = Ethernet.localIP()[3];
+  ThreeDigit::display_number(Ethernet.localIP()[3]);
   webserver.setDefaultCommand(&indexPage);
   webserver.addCommand("index.html", &indexPage);
   MsTimer2::set(33, update_leds);
