@@ -2,7 +2,7 @@
 #define ThreeDigit_h
 
 namespace ThreeDigit {
-  static char led_codes[] = { 0xDE, 0x06, 0xBA, 0xAE, 0x66, 0xEC, 0xFC, 0xC6, 0xFE, 0xE6 };
+  static char led_codes[] = { 0x7B, 0x041, 0x2F, 0x4F, 0x55, 0x5E, 0x7E, 0x59, 0x7F, 0x5D };
   void display_number(int number_to_display);
   void display_time(unsigned long time_to_display);
   void display_time(unsigned long time_to_display, bool pad_zeros);

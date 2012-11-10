@@ -64,7 +64,7 @@ char ThreeDigit::min_code(char min_val, bool pad_zeros)
   }
   else
   {
-    return led_codes[min_val] | 0x01;
+    return led_codes[min_val] | 0x80;
   }
 }
 
