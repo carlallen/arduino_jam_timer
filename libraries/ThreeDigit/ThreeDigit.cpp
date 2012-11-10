@@ -5,7 +5,9 @@
 #define LATCH_PIN 5
 #define CLOCK_PIN 6
 #define DATA_PIN 7
-
+char hund_val = 0x00;
+char ten_val = 0x00;
+char one_val = 0x00;
 
 void ThreeDigit::display_number(int number_to_display) {
   char tens = number_to_display % 100 / 10;
@@ -31,11 +33,16 @@ void ThreeDigit::display_time(unsigned long time_to_display, bool pad_zeros) {
 }
 
 void ThreeDigit::update_display(char one, char ten, char hundred) {
-  digitalWrite(LATCH_PIN, LOW);
-  shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, one);
-  shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, ten);
-  shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, hundred);
-  digitalWrite(LATCH_PIN, HIGH);
+  if (!(one == one_val && ten == ten_val && hundred == hund_val)) {
+    one_val = one;
+    ten_val = ten;
+    hund_val = hundred;
+    digitalWrite(LATCH_PIN, LOW);
+    shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, one);
+    shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, ten);
+    shiftOut(DATA_PIN, CLOCK_PIN, LSBFIRST, hundred);
+    digitalWrite(LATCH_PIN, HIGH);
+  }
 }
 
 void ThreeDigit::setup() {
