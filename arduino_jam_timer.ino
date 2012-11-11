@@ -113,7 +113,7 @@ void update_leds() {
 void setup() {
   // set output mode for serial pins
   ThreeDigit::setup();
-  ThreeDigit::update_display(0x20, 0x20, 0x20);
+  ThreeDigit::update_display(0x04, 0x04, 0x04);
   Ethernet.begin(mac);
   ThreeDigit::display_number(Ethernet.localIP()[3]);
   webserver.setDefaultCommand(&indexPage);
